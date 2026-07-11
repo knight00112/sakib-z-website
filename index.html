@@ -1,116 +1,719 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Webpage</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ember &amp; Salt — Wood-Fired Kitchen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
+/* ============ TOKENS ============ */
+:root{
+  --char:      #1B1613;   /* near-black charcoal, base bg */
+  --char-2:    #241D19;   /* slightly lifted panel */
+  --ember:     #C1440E;   /* main ember/clay accent */
+  --ember-hot: #E85D2A;   /* brighter ember for hover/glow */
+  --gold:      #C9A24B;   /* warm gold for accents/labels */
+  --paper:     #EFE9DC;   /* main text / off-white */
+  --paper-dim: #B7AFA0;   /* secondary text */
+  --olive:     #5C6349;   /* muted olive, rare use */
+  --line:      rgba(239,233,220,0.14);
 
-        body {
-            background: #f4f4f4;
-            color: #333;
-        }
+  --display: 'Fraunces', serif;
+  --body: 'Work Sans', sans-serif;
 
-        header {
-            background: #0077cc;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
+  --wrap: 1180px;
+}
 
-        nav {
-            background: #005fa3;
-            padding: 10px;
-            text-align: center;
-        }
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+body{
+  background:var(--char);
+  color:var(--paper);
+  font-family:var(--body);
+  font-weight:400;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{ max-width:100%; display:block; }
+a{ color:inherit; text-decoration:none; }
+.wrap{ max-width:var(--wrap); margin:0 auto; padding:0 32px; }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
+::selection{ background:var(--ember); color:var(--paper); }
 
-        nav a:hover {
-            text-decoration: underline;
-        }
+/* focus visibility */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:3px;
+}
 
-        .hero {
-            text-align: center;
-            padding: 80px 20px;
-            background: white;
-        }
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+}
 
-        .hero h1 {
-            font-size: 40px;
-            margin-bottom: 15px;
-        }
+/* ============ EYEBROW / LABELS ============ */
+.eyebrow{
+  font-family:var(--body);
+  font-size:12px;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.eyebrow::before{
+  content:"";
+  width:22px; height:1px;
+  background:var(--gold);
+  display:inline-block;
+}
 
-        .hero p {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
+h1,h2,h3{ font-family:var(--display); font-weight:500; letter-spacing:-0.01em; }
 
-        button {
-            background: #0077cc;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+/* ============ NAV ============ */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  padding:22px 0;
+  transition:background 0.4s ease, padding 0.4s ease, border-color .4s ease;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled{
+  background:rgba(27,22,19,0.92);
+  backdrop-filter:blur(10px);
+  padding:14px 0;
+  border-color:var(--line);
+}
+.nav .wrap{ display:flex; align-items:center; justify-content:space-between; }
+.brand{
+  font-family:var(--display);
+  font-size:21px;
+  letter-spacing:0.02em;
+  display:flex; align-items:center; gap:10px;
+}
+.brand .mark{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--ember);
+  box-shadow:0 0 12px 2px rgba(193,68,14,0.7);
+}
+.nav-links{ display:flex; gap:36px; align-items:center; }
+.nav-links a{
+  font-size:13px; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--paper-dim); font-weight:500;
+  position:relative; padding-bottom:4px;
+}
+.nav-links a::after{
+  content:""; position:absolute; left:0; bottom:0; width:0; height:1px;
+  background:var(--gold); transition:width .3s ease;
+}
+.nav-links a:hover{ color:var(--paper); }
+.nav-links a:hover::after{ width:100%; }
+.nav-cta{
+  border:1px solid var(--gold); color:var(--gold) !important;
+  padding:9px 18px; border-radius:2px; font-size:12px !important;
+}
+.nav-cta:hover{ background:var(--gold); color:var(--char) !important; }
+.nav-cta::after{ display:none; }
 
-        button:hover {
-            background: #005fa3;
-        }
+.burger{ display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px; }
+.burger span{ width:22px; height:1.5px; background:var(--paper); display:block; }
 
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
-            margin-top: 40px;
-        }
-    </style>
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  min-height:100vh;
+  display:flex; align-items:flex-end;
+  padding:140px 0 90px;
+  overflow:hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 100%, rgba(193,68,14,0.22), transparent 70%),
+    linear-gradient(180deg, #17120F 0%, #1B1613 60%);
+}
+#ember-canvas{
+  position:absolute; inset:0; width:100%; height:100%;
+  pointer-events:none;
+}
+.hero-grain{
+  position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+  pointer-events:none;
+}
+.hero .wrap{ position:relative; z-index:3; width:100%; }
+.hero-top{
+  display:flex; justify-content:space-between; align-items:flex-end; gap:40px;
+  margin-bottom:26px;
+}
+.hero h1{
+  font-size:clamp(52px, 9vw, 128px);
+  line-height:0.92;
+  color:var(--paper);
+  max-width:14ch;
+}
+.hero h1 em{
+  font-style:italic;
+  color:var(--ember-hot);
+  font-weight:400;
+}
+.hero-sub{
+  max-width:340px;
+  color:var(--paper-dim);
+  font-size:15px;
+  padding-bottom:10px;
+  border-left:1px solid var(--line);
+  padding-left:20px;
+}
+.hero-meta{
+  display:flex; gap:48px;
+  padding-top:26px; margin-top:26px;
+  border-top:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.hero-meta div{ font-size:13px; color:var(--paper-dim); }
+.hero-meta strong{
+  display:block; font-family:var(--display); font-size:17px; color:var(--paper);
+  font-weight:500; margin-bottom:3px;
+}
+.scroll-cue{
+  position:absolute; right:32px; bottom:34px; z-index:3;
+  writing-mode:vertical-rl;
+  font-size:11px; letter-spacing:0.2em; text-transform:uppercase;
+  color:var(--paper-dim);
+  display:flex; align-items:center; gap:10px;
+}
+.scroll-cue::after{
+  content:""; width:1px; height:40px; background:var(--gold);
+  animation:scrollpulse 2s ease-in-out infinite;
+}
+@keyframes scrollpulse{ 0%,100%{ opacity:0.3; } 50%{ opacity:1; } }
+
+/* ============ SECTION SHELL ============ */
+section{ position:relative; padding:120px 0; }
+.section-head{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:40px; margin-bottom:64px; flex-wrap:wrap;
+}
+.section-head h2{ font-size:clamp(34px,4.4vw,54px); margin-top:14px; max-width:12ch; }
+.section-head p{ max-width:360px; color:var(--paper-dim); font-size:15px; padding-bottom:6px; }
+
+/* ============ PHILOSOPHY ============ */
+.philosophy{ background:var(--char-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.phil-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:80px; align-items:center; }
+.phil-copy p{ color:var(--paper-dim); font-size:16px; margin-bottom:20px; max-width:52ch; }
+.phil-copy p:first-of-type{ color:var(--paper); font-size:20px; font-family:var(--display); font-weight:400; line-height:1.5; }
+.wood-rings{
+  position:relative; aspect-ratio:1/1; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+}
+.wood-rings svg{ width:100%; height:100%; }
+.ring-label{
+  position:absolute; text-align:center; font-family:var(--display);
+}
+.ring-label .num{ font-size:15px; color:var(--gold); display:block; margin-bottom:6px; }
+.ring-label .txt{ font-size:15px; color:var(--paper-dim); max-width:120px; }
+
+/* ============ MENU ============ */
+.menu-tabs{
+  display:flex; gap:8px; margin-bottom:50px; flex-wrap:wrap;
+  border-bottom:1px solid var(--line);
+}
+.menu-tab{
+  background:none; border:none; color:var(--paper-dim);
+  font-family:var(--body); font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:14px 4px; margin-right:32px; cursor:pointer; position:relative; font-weight:500;
+}
+.menu-tab::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--ember);
+  transform:scaleX(0); transform-origin:left; transition:transform .3s ease;
+}
+.menu-tab.active{ color:var(--paper); }
+.menu-tab.active::after{ transform:scaleX(1); }
+.menu-tab:hover{ color:var(--paper); }
+
+.menu-panel{ display:none; }
+.menu-panel.active{ display:block; animation:fadein .5s ease; }
+@keyframes fadein{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+
+.menu-list{ display:grid; grid-template-columns:1fr 1fr; gap:0 60px; }
+.menu-item{
+  display:flex; justify-content:space-between; gap:20px;
+  padding:22px 0; border-bottom:1px solid var(--line);
+}
+.mi-left{ max-width:70%; }
+.mi-name{ font-family:var(--display); font-size:18px; color:var(--paper); font-weight:500; }
+.mi-tag{
+  font-size:10px; color:var(--olive); letter-spacing:0.08em; text-transform:uppercase;
+  border:1px solid rgba(92,99,73,0.5); border-radius:20px; padding:2px 8px; margin-left:8px;
+  display:inline-block; vertical-align:middle;
+}
+.mi-desc{ font-size:13.5px; color:var(--paper-dim); margin-top:5px; }
+.mi-price{
+  font-family:var(--display); color:var(--gold); font-size:17px; white-space:nowrap;
+}
+
+/* ============ GALLERY STRIP ============ */
+.gallery{ padding:0; }
+.gallery-strip{
+  display:grid; grid-template-columns:repeat(5,1fr);
+  height:340px;
+}
+.gallery-strip figure{
+  position:relative; overflow:hidden; margin:0;
+  transition:flex 0.4s ease;
+}
+.gallery-strip img{
+  width:100%; height:100%; object-fit:cover;
+  filter:grayscale(35%) brightness(0.75) saturate(1.1);
+  transition:filter .5s ease, transform .6s ease;
+}
+.gallery-strip figure:hover img{
+  filter:grayscale(0%) brightness(0.95) saturate(1.2);
+  transform:scale(1.06);
+}
+
+/* ============ RESERVE ============ */
+.reserve{ background:var(--char-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+.reserve-grid{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:80px; }
+.reserve-copy h2{ font-size:clamp(34px,4.4vw,52px); margin:14px 0 22px; }
+.reserve-copy p{ color:var(--paper-dim); max-width:40ch; margin-bottom:34px; }
+.reserve-hours{ border-top:1px solid var(--line); padding-top:24px; }
+.reserve-hours div{ display:flex; justify-content:space-between; font-size:14px; padding:8px 0; color:var(--paper-dim); }
+.reserve-hours span:last-child{ color:var(--paper); }
+
+form.reserve-form{ display:grid; gap:18px; }
+.form-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.field{ display:flex; flex-direction:column; gap:8px; }
+.field label{ font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--paper-dim); }
+.field input, .field select, .field textarea{
+  background:transparent; border:none; border-bottom:1px solid var(--line);
+  color:var(--paper); font-family:var(--body); font-size:15px; padding:10px 2px;
+  transition:border-color .25s ease;
+}
+.field input::placeholder, .field textarea::placeholder{ color:rgba(183,175,160,0.5); }
+.field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); }
+.field select{ appearance:none; cursor:pointer; }
+.field select option{ background:var(--char); }
+textarea{ resize:vertical; min-height:70px; }
+
+.btn{
+  border:1px solid var(--ember); background:var(--ember); color:var(--paper);
+  font-family:var(--body); font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:16px 30px; cursor:pointer; border-radius:2px; font-weight:500;
+  transition:background .25s ease, transform .15s ease, box-shadow .25s ease;
+  justify-self:start; margin-top:6px;
+}
+.btn:hover{ background:var(--ember-hot); border-color:var(--ember-hot); box-shadow:0 8px 30px -8px rgba(232,93,42,0.6); transform:translateY(-1px); }
+.btn:active{ transform:translateY(0); }
+.btn[disabled]{ opacity:0.55; cursor:default; transform:none; box-shadow:none; }
+
+.form-note{ font-size:13px; color:var(--gold); min-height:18px; }
+
+/* ============ LOCATION / FOOTER ============ */
+footer{ padding:90px 0 40px; }
+.footer-grid{
+  display:grid; grid-template-columns:1.2fr 1fr 1fr;
+  gap:60px; padding-bottom:60px; border-bottom:1px solid var(--line);
+}
+.footer-brand .brand{ margin-bottom:16px; }
+.footer-brand p{ color:var(--paper-dim); font-size:14px; max-width:32ch; }
+.footer-col h4{
+  font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold);
+  margin-bottom:18px; font-weight:600; font-family:var(--body);
+}
+.footer-col p, .footer-col a{ display:block; color:var(--paper-dim); font-size:14px; margin-bottom:10px; }
+.footer-col a:hover{ color:var(--paper); }
+.footer-bottom{
+  display:flex; justify-content:space-between; padding-top:30px;
+  font-size:12px; color:var(--paper-dim); flex-wrap:wrap; gap:10px;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  .nav-links{ position:fixed; top:0; right:0; height:100vh; width:min(78vw,320px);
+    background:var(--char-2); flex-direction:column; justify-content:center; align-items:flex-start;
+    padding:40px; gap:26px; transform:translateX(100%); transition:transform .4s ease; border-left:1px solid var(--line); }
+  .nav-links.open{ transform:translateX(0); }
+  .burger{ display:flex; z-index:200; }
+  .hero-top{ flex-direction:column; align-items:flex-start; gap:20px; }
+  .hero-meta{ gap:30px; }
+  .phil-grid, .reserve-grid{ grid-template-columns:1fr; gap:50px; }
+  .menu-list{ grid-template-columns:1fr; }
+  .gallery-strip{ grid-template-columns:repeat(3,1fr); height:auto; }
+  .gallery-strip figure{ height:180px; }
+  .footer-grid{ grid-template-columns:1fr; gap:36px; }
+  .form-row{ grid-template-columns:1fr; }
+  section{ padding:80px 0; }
+}
+</style>
 </head>
-
 <body>
 
-<header>
-    <h1>Welcome to My Website</h1>
-</header>
-
-<nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Services</a>
-    <a href="#">Contact</a>
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <a href="#top" class="brand"><span class="mark"></span>Ember &amp; Salt</a>
+    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
+      <a href="#philosophy">Philosophy</a>
+      <a href="#menu">Menu</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#reserve" class="nav-cta">Reserve</a>
+    </div>
+  </div>
 </nav>
 
-<section class="hero">
-    <h1>Hello, World!</h1>
-    <p>This is a simple responsive webpage built with HTML, CSS, and JavaScript.</p>
+<header class="hero" id="top">
+  <canvas id="ember-canvas"></canvas>
+  <div class="hero-grain"></div>
+  <div class="wrap">
+    <div class="hero-top">
+      <h1>Cooked over<br><em>live fire.</em><br>Served bare.</h1>
+      <p class="hero-sub">A wood-fired kitchen on the corner of 4th &amp; Almond — where the flame does most of the seasoning.</p>
+    </div>
+    <div class="hero-meta">
+      <div><strong>5:30 – 11PM</strong>Tuesday through Sunday</div>
+      <div><strong>412 Almond St</strong>Old Mill District</div>
+      <div><strong>Wood-fired</strong>Oak &amp; almond embers only</div>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</header>
 
-    <button onclick="showMessage()">Click Me</button>
+<section class="philosophy" id="philosophy">
+  <div class="wrap phil-grid">
+    <div class="phil-copy">
+      <span class="eyebrow">Our Approach</span>
+      <p>We cook with one heat source: fire. No gas line runs through this kitchen — only oak, almond wood, and the patience to let embers do the work.</p>
+      <p>Every dish passes over the coals before it reaches the pass, whether that's a whole fish, a head of charred lettuce, or the bread that opens the meal. Smoke is a seasoning here, not an accident.</p>
+      <p>We built the menu around what the fire changes about an ingredient, not around what it can disguise. Simple plates, few components, nothing between you and what came off the grill.</p>
+    </div>
+    <div class="wood-rings" aria-hidden="true">
+      <svg viewBox="0 0 400 400">
+        <circle cx="200" cy="200" r="180" fill="none" stroke="rgba(239,233,220,0.08)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="145" fill="none" stroke="rgba(239,233,220,0.10)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="110" fill="none" stroke="rgba(201,162,75,0.35)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="75" fill="none" stroke="rgba(239,233,220,0.14)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="40" fill="rgba(193,68,14,0.18)" stroke="var(--ember)" stroke-width="1"/>
+      </svg>
+      <div class="ring-label"><span class="num">Est. Coal Bed</span><span class="txt">held at 650°F through service</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="menu">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">The Menu</span>
+        <h2>What's coming off the fire tonight.</h2>
+      </div>
+      <p>A short, changing menu built around the day's delivery. Ask your server what came in this morning.</p>
+    </div>
+
+    <div class="menu-tabs" role="tablist">
+      <button class="menu-tab active" data-panel="starters" role="tab" aria-selected="true">Starters</button>
+      <button class="menu-tab" data-panel="mains" role="tab" aria-selected="false">Mains</button>
+      <button class="menu-tab" data-panel="sides" role="tab" aria-selected="false">Sides</button>
+      <button class="menu-tab" data-panel="desserts" role="tab" aria-selected="false">Desserts</button>
+    </div>
+
+    <div class="menu-panel active" id="starters">
+      <div class="menu-list">
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Charred Bread</span><span class="mi-tag">GF option</span><div class="mi-desc">Whipped lardo, smoked honey, flake salt</div></div>
+          <div class="mi-price">$9</div>
+        </div>
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Almond-Smoked Trout</span><div class="mi-desc">Crème fraîche, dill, rye crisp</div></div>
+          <div class="mi-price">$16</div>
+        </div>
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Blistered Padrones</span><span class="mi-tag">Vegan</span><div class="mi-desc">Citrus salt, fire oil</div></div>
+          <div class="mi-price">$11</div>
+        </div>
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Beef Tartare</span><div class="mi-desc">Ember-charred onion, egg yolk, rye</div></div>
+          <div class="mi-price">$18</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="mains">
+      <div class="menu-list">
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Whole Fired Branzino</span><span class="mi-tag">GF</span><div class="mi-desc">Preserved lemon, salsa verde</div></div>
+          <div class="mi-price">$34</div>
+        </div>
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Dry-Aged Ribeye</span><span class="mi-tag">20oz</span><div class="mi-desc">Bone marrow butter, coal-roasted shallot</div></div>
+          <div class="mi-price">$58</div>
+        </div>
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Half Chicken</span><div class="mi-desc">Under a brick, chili honey glaze</div></div>
+          <div class="mi-price">$27</div>
+        </div>
+        <div class="menu-item">
+          <div class="mi-left"><span class="mi-name">Charred Cauliflower Steak</span><span class="mi-tag">Vegan</span><div class="mi-desc">Tahini, pomegranate, herb oil</div></div>
+          <div class="mi-price">$22</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="sides">
+      <div class="menu-list">
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Fire-Roasted Potatoes</span><div class="mi-desc">Bay leaf, garlic ash</div></div><div class="mi-price">$8</div></div>
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Grilled Greens</span><div class="mi-desc">Seasonal, anchovy dressing</div></div><div class="mi-price">$9</div></div>
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Smoked Butter Beans</span><div class="mi-desc">Rosemary, olive oil</div></div><div class="mi-price">$8</div></div>
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Embered Carrots</span><div class="mi-desc">Whipped feta, dukkah</div></div><div class="mi-price">$9</div></div>
+      </div>
+    </div>
+
+    <div class="menu-panel" id="desserts">
+      <div class="menu-list">
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Woodfire Fig Tart</span><div class="mi-desc">Mascarpone, honeycomb</div></div><div class="mi-price">$12</div></div>
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Smoked Chocolate Pot</span><div class="mi-desc">Sea salt, olive oil</div></div><div class="mi-price">$11</div></div>
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Grilled Stone Fruit</span><div class="mi-desc">Vanilla bean, almond crumble</div></div><div class="mi-price">$10</div></div>
+        <div class="menu-item"><div class="mi-left"><span class="mi-name">Affogato</span><div class="mi-desc">Espresso, smoked vanilla gelato</div></div><div class="mi-price">$9</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="gallery-strip">
+    <figure><img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=500&q=80" alt="Wood-fired dish plated"></figure>
+    <figure><img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?w=500&q=80" alt="Open flame grill"></figure>
+    <figure><img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=500&q=80" alt="Restaurant interior"></figure>
+    <figure><img src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=500&q=80" alt="Charred vegetables"></figure>
+    <figure><img src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=500&q=80" alt="Dining table set"></figure>
+  </div>
+</section>
+
+<section class="reserve" id="reserve">
+  <div class="wrap reserve-grid">
+    <div class="reserve-copy">
+      <span class="eyebrow">Book a Table</span>
+      <h2>Come sit by the fire.</h2>
+      <p>Tables turn every two hours. We hold reservations for fifteen minutes past the booking time.</p>
+      <div class="reserve-hours">
+        <div><span>Tue – Thu</span><span>5:30PM – 10:00PM</span></div>
+        <div><span>Fri – Sat</span><span>5:30PM – 11:00PM</span></div>
+        <div><span>Sunday</span><span>5:00PM – 9:00PM</span></div>
+        <div><span>Monday</span><span>Closed</span></div>
+      </div>
+    </div>
+    <form class="reserve-form" id="reserveForm">
+      <div class="form-row">
+        <div class="field"><label for="rname">Name</label><input type="text" id="rname" placeholder="Your full name" required></div>
+        <div class="field"><label for="rphone">Phone</label><input type="tel" id="rphone" placeholder="(555) 000-0000" required></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="rdate">Date</label><input type="date" id="rdate" required></div>
+        <div class="field"><label for="rtime">Time</label>
+          <select id="rtime" required>
+            <option value="">Select a time</option>
+            <option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option>
+            <option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option>
+            <option>8:30 PM</option><option>9:00 PM</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label for="rparty">Party Size</label>
+          <select id="rparty" required>
+            <option value="">Select</option>
+            <option>1 guest</option><option>2 guests</option><option>3 guests</option>
+            <option>4 guests</option><option>5 guests</option><option>6+ guests</option>
+          </select>
+        </div>
+        <div class="field"><label for="remail">Email</label><input type="email" id="remail" placeholder="you@email.com" required></div>
+      </div>
+      <div class="field"><label for="rnote">Notes (optional)</label><textarea id="rnote" placeholder="Allergies, occasions, seating preference..."></textarea></div>
+      <button type="submit" class="btn" id="rbtn">Request Table</button>
+      <div class="form-note" id="rnoteMsg" role="status"></div>
+    </form>
+  </div>
 </section>
 
 <footer>
-    <p>&copy; 2026 My Website. All rights reserved.</p>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand"><span class="mark"></span>Ember &amp; Salt</div>
+        <p>A wood-fired kitchen in the Old Mill District, built around live fire and short menus.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <p>412 Almond St</p>
+        <p>Old Mill District</p>
+        <p>Srinagar</p>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#reserve">Reservations</a>
+        <a href="#menu">Menu &amp; Pricing</a>
+        <a href="tel:+15550000000">(555) 000-0000</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Ember &amp; Salt. All rights reserved.</span>
+      <span>Built with fire, oak, and a little patience.</span>
+    </div>
+  </div>
 </footer>
 
 <script>
-function showMessage() {
-    alert("Thanks for visiting my website!");
-}
-</script>
+(function(){
+  "use strict";
 
+  /* ---------- Nav scroll state + mobile menu ---------- */
+  const nav = document.getElementById('nav');
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+
+  function onScroll(){
+    if(window.scrollY > 40){ nav.classList.add('scrolled'); }
+    else{ nav.classList.remove('scrolled'); }
+  }
+  document.addEventListener('scroll', onScroll, { passive:true });
+  onScroll();
+
+  burger.addEventListener('click', function(){
+    const isOpen = navLinks.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(isOpen));
+  });
+  navLinks.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ navLinks.classList.remove('open'); burger.setAttribute('aria-expanded','false'); });
+  });
+
+  /* ---------- Menu tabs ---------- */
+  const tabs = document.querySelectorAll('.menu-tab');
+  const panels = document.querySelectorAll('.menu-panel');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
+      panels.forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected','true');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+    });
+  });
+
+  /* ---------- Reservation form (client-side only) ---------- */
+  const form = document.getElementById('reserveForm');
+  const btn = document.getElementById('rbtn');
+  const msg = document.getElementById('rnoteMsg');
+  const dateInput = document.getElementById('rdate');
+
+  // prevent picking a past date
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('min', today);
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){
+      msg.textContent = 'Please fill in every field before requesting a table.';
+      msg.style.color = 'var(--ember-hot)';
+      return;
+    }
+    const name = document.getElementById('rname').value.trim();
+    const date = dateInput.value;
+    const time = document.getElementById('rtime').value;
+    const party = document.getElementById('rparty').value;
+
+    btn.disabled = true;
+    btn.textContent = 'Sending request…';
+    msg.style.color = 'var(--gold)';
+    msg.textContent = '';
+
+    setTimeout(function(){
+      btn.textContent = 'Request Sent';
+      msg.style.color = 'var(--gold)';
+      msg.textContent = `Thanks, ${name} — we'll confirm your table for ${party} on ${date} at ${time} by email shortly.`;
+      setTimeout(function(){
+        btn.disabled = false;
+        btn.textContent = 'Request Table';
+        form.reset();
+      }, 3200);
+    }, 900);
+  });
+
+  /* ---------- Signature element: ember particle field in hero ---------- */
+  const canvas = document.getElementById('ember-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let W, H, dpr;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function makeParticle(spawnBottom){
+    return {
+      x: Math.random() * W,
+      y: spawnBottom ? H + Math.random()*40 : H - Math.random()*H,
+      r: 1 + Math.random()*2.2,
+      speed: 0.3 + Math.random()*0.9,
+      drift: (Math.random()-0.5)*0.6,
+      alpha: 0.25 + Math.random()*0.55,
+      flicker: Math.random()*Math.PI*2
+    };
+  }
+
+  function initParticles(){
+    const count = W < 700 ? 26 : 55;
+    particles = new Array(count).fill(0).map(function(){ return makeParticle(false); });
+  }
+
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(function(p){
+      p.y -= p.speed;
+      p.x += p.drift + Math.sin(p.y*0.02)*0.3;
+      p.flicker += 0.06;
+      const a = p.alpha * (0.6 + 0.4*Math.sin(p.flicker));
+      const grad = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
+      grad.addColorStop(0, 'rgba(232,93,42,' + a + ')');
+      grad.addColorStop(1, 'rgba(232,93,42,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r*4, 0, Math.PI*2);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,180,120,' + Math.min(a+0.2,1) + ')';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r*0.6, 0, Math.PI*2);
+      ctx.fill();
+
+      if(p.y < -20 || p.x < -20 || p.x > W+20){
+        Object.assign(p, makeParticle(true));
+      }
+    });
+    if(!reduceMotion){ requestAnimationFrame(tick); }
+  }
+
+  function boot(){
+    resize();
+    initParticles();
+    if(!reduceMotion){ requestAnimationFrame(tick); }
+    else { tick(); } // draw a single static frame
+  }
+
+  window.addEventListener('resize', function(){ resize(); initParticles(); }, { passive:true });
+  boot();
+
+})();
+</script>
 </body>
 </html>
