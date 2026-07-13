@@ -243,6 +243,7 @@ section{ position:relative; padding:120px 0; }
   display:flex; justify-content:space-between; gap:20px;
   padding:22px 0; border-bottom:1px solid var(--line);
 }
+.menu-item:nth-child(odd){ }
 .mi-left{ max-width:70%; }
 .mi-name{ font-family:var(--display); font-size:18px; color:var(--paper); font-weight:500; }
 .mi-tag{
@@ -312,6 +313,14 @@ textarea{ resize:vertical; min-height:70px; }
 
 .form-note{ font-size:13px; color:var(--gold); min-height:18px; }
 
+.reserve-cta-panel{
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  gap:22px; padding:44px; border:1px solid var(--line); border-radius:2px;
+  background:rgba(239,233,220,0.02);
+}
+.reserve-cta-text{ color:var(--paper-dim); font-size:16px; max-width:38ch; }
+.reserve-cta-panel .btn{ margin-top:0; }
+
 /* ============ LOCATION / FOOTER ============ */
 footer{ padding:90px 0 40px; }
 .footer-grid{
@@ -362,7 +371,7 @@ footer{ padding:90px 0 40px; }
       <a href="#philosophy">Philosophy</a>
       <a href="#menu">Menu</a>
       <a href="#gallery">Gallery</a>
-      <a href="#reserve" class="nav-cta">Reserve</a>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLScQXMLsExTe5Xj9bTFyhTPvLfDazD6sKUJcALEjQtlIqlu8GA/viewform?usp=publish-editor" target="_blank" rel="noopener" class="nav-cta">Reserve</a>
     </div>
   </div>
 </nav>
@@ -507,36 +516,10 @@ footer{ padding:90px 0 40px; }
         <div><span>Monday</span><span>Closed</span></div>
       </div>
     </div>
-    <form class="reserve-form" id="reserveForm">
-      <div class="form-row">
-        <div class="field"><label for="rname">Name</label><input type="text" id="rname" placeholder="Your full name" required></div>
-        <div class="field"><label for="rphone">Phone</label><input type="tel" id="rphone" placeholder="(555) 000-0000" required></div>
-      </div>
-      <div class="form-row">
-        <div class="field"><label for="rdate">Date</label><input type="date" id="rdate" required></div>
-        <div class="field"><label for="rtime">Time</label>
-          <select id="rtime" required>
-            <option value="">Select a time</option>
-            <option>5:30 PM</option><option>6:00 PM</option><option>6:30 PM</option>
-            <option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option>
-            <option>8:30 PM</option><option>9:00 PM</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="field"><label for="rparty">Party Size</label>
-          <select id="rparty" required>
-            <option value="">Select</option>
-            <option>1 guest</option><option>2 guests</option><option>3 guests</option>
-            <option>4 guests</option><option>5 guests</option><option>6+ guests</option>
-          </select>
-        </div>
-        <div class="field"><label for="remail">Email</label><input type="email" id="remail" placeholder="you@email.com" required></div>
-      </div>
-      <div class="field"><label for="rnote">Notes (optional)</label><textarea id="rnote" placeholder="Allergies, occasions, seating preference..."></textarea></div>
-      <button type="submit" class="btn" id="rbtn">Request Table</button>
-      <div class="form-note" id="rnoteMsg" role="status"></div>
-    </form>
+    <div class="reserve-cta-panel">
+      <p class="reserve-cta-text">Tell us the date, time, and party size and we'll confirm by email or phone. Takes less than a minute.</p>
+      <a href="https://docs.google.com/forms/d/e/1FAIpQLScQXMLsExTe5Xj9bTFyhTPvLfDazD6sKUJcALEjQtlIqlu8GA/viewform?usp=publish-editor" target="_blank" rel="noopener" class="btn">Reserve a Table</a>
+    </div>
   </div>
 </section>
 
@@ -555,7 +538,7 @@ footer{ padding:90px 0 40px; }
       </div>
       <div class="footer-col">
         <h4>Connect</h4>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSe3m21knAWaV3XIIJWg_w1C5vxVvVbyDz5htcdZ6R7bLUXMKg/viewform?usp=publish-editor">Reservations</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScQXMLsExTe5Xj9bTFyhTPvLfDazD6sKUJcALEjQtlIqlu8GA/viewform?usp=publish-editor" target="_blank" rel="noopener">Reservations</a>
         <a href="#menu">Menu &amp; Pricing</a>
         <a href="tel:+15550000000">(555) 000-0000</a>
       </div>
@@ -602,45 +585,6 @@ footer{ padding:90px 0 40px; }
       tab.setAttribute('aria-selected','true');
       document.getElementById(tab.dataset.panel).classList.add('active');
     });
-  });
-
-  /* ---------- Reservation form (client-side only) ---------- */
-  const form = document.getElementById('reserveForm');
-  const btn = document.getElementById('rbtn');
-  const msg = document.getElementById('rnoteMsg');
-  const dateInput = document.getElementById('rdate');
-
-  // prevent picking a past date
-  const today = new Date().toISOString().split('T')[0];
-  dateInput.setAttribute('min', today);
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    if(!form.checkValidity()){
-      msg.textContent = 'Please fill in every field before requesting a table.';
-      msg.style.color = 'var(--ember-hot)';
-      return;
-    }
-    const name = document.getElementById('rname').value.trim();
-    const date = dateInput.value;
-    const time = document.getElementById('rtime').value;
-    const party = document.getElementById('rparty').value;
-
-    btn.disabled = true;
-    btn.textContent = 'Sending request…';
-    msg.style.color = 'var(--gold)';
-    msg.textContent = '';
-
-    setTimeout(function(){
-      btn.textContent = 'Request Sent';
-      msg.style.color = 'var(--gold)';
-      msg.textContent = `Thanks, ${name} — we'll confirm your table for ${party} on ${date} at ${time} by email shortly.`;
-      setTimeout(function(){
-        btn.disabled = false;
-        btn.textContent = 'Request Table';
-        form.reset();
-      }, 3200);
-    }, 900);
   });
 
   /* ---------- Signature element: ember particle field in hero ---------- */
